@@ -1,0 +1,2 @@
+Warning (10268): Verilog HDL information at memory.v(125): always construct contains both blocking and non-blocking assignments File: D:/Studia/Praca_dyplomowa/FPGA/SPI/memory.v Line: 125
+Info (10281): Verilog HDL Declaration information at memory.v(11): object "DATA_DONE" differs only in case from object "data_done" in the same scope File: D:/Studia/Praca_dyplomowa/FPGA/SPI/memory.v Line: 11

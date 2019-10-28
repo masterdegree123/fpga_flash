@@ -1,0 +1,125 @@
+Flow report for Flash_SPI
+Wed Sep 25 22:41:29 2019
+Quartus Prime Version 17.1.0 Build 590 10/25/2017 SJ Lite Edition
+
+
+---------------------
+; Table of Contents ;
+---------------------
+  1. Legal Notice
+  2. Flow Summary
+  3. Flow Settings
+  4. Flow Non-Default Global Settings
+  5. Flow Elapsed Time
+  6. Flow OS Summary
+  7. Flow Log
+  8. Flow Messages
+  9. Flow Suppressed Messages
+
+
+
+----------------
+; Legal Notice ;
+----------------
+Copyright (C) 2017  Intel Corporation. All rights reserved.
+Your use of Intel Corporation's design tools, logic functions 
+and other software and tools, and its AMPP partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Intel Program License 
+Subscription Agreement, the Intel Quartus Prime License Agreement,
+the Intel FPGA IP License Agreement, or other applicable license
+agreement, including, without limitation, that your use is for
+the sole purpose of programming logic devices manufactured by
+Intel and sold by Intel or its authorized distributors.  Please
+refer to the applicable agreement for further details.
+
+
+
++---------------------------------------------------------------------------+
+; Flow Summary                                                              ;
++-----------------------------+---------------------------------------------+
+; Flow Status                 ; Flow Failed - Wed Sep 25 22:41:29 2019      ;
+; Quartus Prime Version       ; 17.1.0 Build 590 10/25/2017 SJ Lite Edition ;
+; Revision Name               ; Flash_SPI                                   ;
+; Top-level Entity Name       ; spi_flash_memory                            ;
+; Family                      ; Cyclone V                                   ;
+; Device                      ; 5CSEMA4U23C6                                ;
+; Timing Models               ; Final                                       ;
+; Logic utilization (in ALMs) ; N/A until Partition Merge                   ;
+; Total registers             ; N/A until Partition Merge                   ;
+; Total pins                  ; N/A until Partition Merge                   ;
+; Total virtual pins          ; N/A until Partition Merge                   ;
+; Total block memory bits     ; N/A until Partition Merge                   ;
+; Total PLLs                  ; N/A until Partition Merge                   ;
+; Total DLLs                  ; N/A until Partition Merge                   ;
++-----------------------------+---------------------------------------------+
+
+
++-----------------------------------------+
+; Flow Settings                           ;
++-------------------+---------------------+
+; Option            ; Setting             ;
++-------------------+---------------------+
+; Start date & time ; 09/25/2019 22:41:06 ;
+; Main task         ; Compilation         ;
+; Revision Name     ; Flash_SPI           ;
++-------------------+---------------------+
+
+
++-----------------------------------------------------------------------------------------------------------------------------------+
+; Flow Non-Default Global Settings                                                                                                  ;
++--------------------------------------+----------------------------------------+---------------+------------------+----------------+
+; Assignment Name                      ; Value                                  ; Default Value ; Entity Name      ; Section Id     ;
++--------------------------------------+----------------------------------------+---------------+------------------+----------------+
+; COMPILER_SIGNATURE_ID                ; 132098951882130.156944406501712        ; --            ; --               ; --             ;
+; EDA_OUTPUT_DATA_FORMAT               ; Verilog Hdl                            ; --            ; --               ; eda_simulation ;
+; EDA_SIMULATION_TOOL                  ; ModelSim-Altera (Verilog)              ; <None>        ; --               ; --             ;
+; EDA_TIME_SCALE                       ; 1 ps                                   ; --            ; --               ; eda_simulation ;
+; FITTER_EFFORT                        ; Standard Fit                           ; Auto Fit      ; --               ; --             ;
+; MAX_CORE_JUNCTION_TEMP               ; 85                                     ; --            ; --               ; --             ;
+; MIN_CORE_JUNCTION_TEMP               ; 0                                      ; --            ; --               ; --             ;
+; OPTIMIZATION_MODE                    ; High Performance Effort                ; Balanced      ; --               ; --             ;
+; PARTITION_COLOR                      ; -- (Not supported for targeted family) ; --            ; spi_flash_memory ; Top            ;
+; PARTITION_FITTER_PRESERVATION_LEVEL  ; -- (Not supported for targeted family) ; --            ; spi_flash_memory ; Top            ;
+; PARTITION_NETLIST_TYPE               ; -- (Not supported for targeted family) ; --            ; spi_flash_memory ; Top            ;
+; PHYSICAL_SYNTHESIS_COMBO_LOGIC       ; On                                     ; Off           ; --               ; --             ;
+; PHYSICAL_SYNTHESIS_REGISTER_RETIMING ; On                                     ; Off           ; --               ; --             ;
+; PLACEMENT_EFFORT_MULTIPLIER          ; 4.0                                    ; 1.0           ; --               ; --             ;
+; POWER_BOARD_THERMAL_MODEL            ; None (CONSERVATIVE)                    ; --            ; --               ; --             ;
+; POWER_PRESET_COOLING_SOLUTION        ; 23 MM HEAT SINK WITH 200 LFPM AIRFLOW  ; --            ; --               ; --             ;
+; PROJECT_OUTPUT_DIRECTORY             ; output_files                           ; --            ; --               ; --             ;
+; ROUTER_TIMING_OPTIMIZATION_LEVEL     ; MAXIMUM                                ; Normal        ; --               ; --             ;
+; TOP_LEVEL_ENTITY                     ; spi_flash_memory                       ; Flash_SPI     ; --               ; --             ;
+; VERILOG_CONSTANT_LOOP_LIMIT          ; 1050000                                ; 5000          ; --               ; --             ;
+; VERILOG_NON_CONSTANT_LOOP_LIMIT      ; 2500000                                ; 250           ; --               ; --             ;
++--------------------------------------+----------------------------------------+---------------+------------------+----------------+
+
+
++----------------------------------------------------------------------------------------------------------------------------+
+; Flow Elapsed Time                                                                                                          ;
++------------------------+--------------+-------------------------+---------------------+------------------------------------+
+; Module Name            ; Elapsed Time ; Average Processors Used ; Peak Virtual Memory ; Total CPU Time (on all processors) ;
++------------------------+--------------+-------------------------+---------------------+------------------------------------+
+; Analysis & Elaboration ; 00:00:25     ; 1.0                     ; 4786 MB             ; 00:01:01                           ;
+; Total                  ; 00:00:25     ; --                      ; --                  ; 00:01:01                           ;
++------------------------+--------------+-------------------------+---------------------+------------------------------------+
+
+
++--------------------------------------------------------------------------------------+
+; Flow OS Summary                                                                      ;
++------------------------+------------------+------------+------------+----------------+
+; Module Name            ; Machine Hostname ; OS Name    ; OS Version ; Processor type ;
++------------------------+------------------+------------+------------+----------------+
+; Analysis & Elaboration ; Oliwier          ; Windows 10 ; 10.0       ; x86_64         ;
++------------------------+------------------+------------+------------+----------------+
+
+
+------------
+; Flow Log ;
+------------
+quartus_map --read_settings_files=on --write_settings_files=off Flash_SPI -c Flash_SPI --analysis_and_elaboration
+
+
+
