@@ -1,0 +1,517 @@
+`include "global_memory_parameters.v"
+
+module memory(
+output reg Q,
+input D, //data input
+input SCK, //clock
+input S, //chip select
+input RESET, //reset
+input W_ENABLE	 //write enable
+);
+
+reg q_buff=1'b0; //output data buffor
+reg [7:0] data_buff=8'h00; //input data buffor
+reg [7:0] data_done=8'h00; //input data save for other operations
+reg sck_val=1'b0; //value of clock
+reg s_flag=1'b0; //select active flag
+reg rst_flag=1'b0; //reset active flag
+reg cnt_flag=1'b0; //counter active flag
+reg [3:0] cnt_bit=4'b0000; //bit counter
+reg [2:0] cnt_byte=3'b000; //byte counter
+reg rdid_flag=1'b0; //rdid instruction status
+reg read_flag=1'b0; //read instruction status
+reg write_flag=1'b0; //write instruction status
+reg page_erase_flag=1'b0; //page erase instruction status
+reg section_erase_flag=1'b0; //page erase instruction status
+reg page_write_flag=1'b0; //page write instruction status
+reg page_prog_flag=1'b0; //page programming instruction status
+reg [23:0] mem_id={`man_id, `mem_typ, `mem_cap}; //Memory ID, Memory Typ, Memory Capacity
+reg [4:0]rdid_cnt=5'b00000; //rdid bit counter
+reg busy_flag=1'b0;//process busy flag
+reg [23:0] mem_add=24'h00000; //addres in memory
+reg [23:0] mem_add_sec=24'h00000; //sector addres
+reg add_done_flag=1'b0; //adres reading end flag
+reg [7:0] read_data=8'h00; //readed data
+reg [7:0] mem_content[(`size-1):0]; //content of memory_body
+
+initial $readmemh("D:/Studia/Praca_dyplomowa/FPGA/SPI/memory_body/memory_body.txt",mem_content);
+
+//save current clock value
+always @ (SCK)
+begin
+	sck_val<=SCK;
+end
+
+//save current select pin status
+always @ (S)
+begin
+	if(!S)
+	begin
+		s_flag<=1'b1;
+		//busy_flag<=1'b0;
+	end
+	else
+	begin
+		s_flag<=1'b0;
+		busy_flag<=1'b0;
+		data_buff<=8'h00;
+		cnt_byte<=2'b00;
+		rdid_flag<=1'b0;
+		read_flag<=1'b0;
+		cnt_bit<=4'b0000;
+		rdid_cnt<=4'b0000;
+		mem_add<=24'h00000;
+		mem_add_sec<=24'h00000;
+		add_done_flag<=1'b0;
+		read_data<=8'h00;
+		page_erase_flag<=1'b0;
+		section_erase_flag<=1'b0;
+		page_write_flag<=1'b0;
+		page_prog_flag<=1'b0;
+	end
+end
+
+//bit counting enable
+always @ (s_flag)
+begin
+	if(!s_flag)
+	begin
+		cnt_flag<=1'b0;
+	end
+end
+
+always @ (posedge sck_val)
+begin
+	if(s_flag && !busy_flag)
+	begin
+		cnt_flag<=1'b1;
+	end
+	else
+	begin
+		cnt_flag<=1'b0;
+	end
+end
+
+//counting bits
+always @ (negedge sck_val)
+begin
+	if(cnt_flag && s_flag && !busy_flag)
+	begin
+		cnt_bit<=cnt_bit+1;
+		if(cnt_bit>4'b0110)
+		begin
+			cnt_bit<=0;
+			cnt_byte<=cnt_byte+1;
+		end
+	end
+end
+
+//read input
+always @ (posedge sck_val)
+begin
+	if(s_flag)
+	begin
+		data_buff[7-cnt_bit]<=D;
+		if(cnt_bit>4'b0110)
+		begin
+			data_done<=data_buff;
+		end
+	end
+end
+
+//instruction activation flag
+always @ (cnt_byte)
+begin
+	if(!busy_flag)
+	begin
+		if(cnt_byte==3'b001)
+		begin
+			case(data_buff)
+				`RDID: 
+				begin 
+					rdid_flag<=1'b1;
+					busy_flag<=1'b1;
+				end
+				`READ:
+				begin 
+					read_flag<=1'b1;
+				end
+				`SE:
+				begin
+					section_erase_flag<=1'b1;
+				end
+				default : q_buff<=1'bX;
+			endcase
+		end
+		
+		if(cnt_byte==3'b010 && (read_flag || section_erase_flag))
+		begin
+			mem_add[23:16]<=data_buff;
+		end
+		
+		if(cnt_byte==3'b011 && (read_flag || section_erase_flag))
+		begin
+			mem_add[15:8]<=data_buff;
+		end
+		
+		if(cnt_byte==3'b100 && (read_flag || section_erase_flag))
+		begin
+			mem_add[7:0]<=data_buff;
+			busy_flag<=1'b1;
+			add_done_flag<=1'b1;
+		end
+	end
+end
+
+//RDID
+always @ (negedge sck_val)
+begin
+	if(rdid_flag && s_flag)
+	begin
+		q_buff<=mem_id[23-rdid_cnt];
+		rdid_cnt<=rdid_cnt+1;
+		if(rdid_cnt>5'b10111)
+		begin
+			rdid_cnt<=5'b00000;
+			rdid_flag<=1'b0;
+		end
+	end
+end
+
+//READ
+always @ (negedge sck_val)
+begin
+	if(read_flag && s_flag && add_done_flag)
+	begin
+		read_data<=mem_content[mem_add];
+		if(mem_add==24'h0FFFFF)
+		begin
+			mem_add<=24'h00000;
+		end
+		else
+		begin
+			mem_add<=mem_add+1;
+		end
+	end
+end
+
+//SE
+always @ (posedge add_done_flag)
+begin
+	if(section_erase_flag)
+	begin
+		mem_add_sec<=`sector_bord;
+	end
+end
+
+//output
+always @ (q_buff)
+begin
+	Q<=q_buff;
+end
+
+endmodule
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

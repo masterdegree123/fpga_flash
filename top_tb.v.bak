@@ -1,0 +1,3 @@
+`include "global_memory_parameters.v"
+
+module top_tb();

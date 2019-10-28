@@ -1,0 +1,120 @@
+`include "global_memory_parameters.v"
+
+module spi_ip_core(
+	input clk,//system clock
+	//SPI<->USER
+	input MOSI, //slave input
+	input SPI_SCK,//spi clock
+	input SPI_RESET, //Reset signal
+	input SPI_S, //Select signal
+	output reg MISO, //slave output
+	//SPI<->MEMORU
+	output reg [7:0] D, //input memory
+	output reg RESET, //reset memory
+	output reg S, //select memory
+	output reg DATA_DONE,// done flag
+	input [7:0] Q //output memory
+);
+
+reg sck_val=1'b0; //SCK value
+reg [2:0] cnt_bit=3'b000; //bit counter input
+reg [7:0] data_to_read=8'h00; //data from SPI input (8 bit)
+reg [7:0] data_to_send=8'h00; //data to SPI output (8 bit)
+reg [2:0] s_reg=3'b000;
+reg s_flag=1'b0;
+reg rst_flag=1'b0;
+reg miso_buff=1'b0;
+
+//serial clock value
+always @ (posedge clk)
+begin
+	if(rst_flag)
+	begin
+		sck_val<=0;
+	end
+	else
+	begin
+		sck_val<=SPI_SCK;
+	end
+end
+	
+wire sck_pos=(SPI_SCK && !sck_val);
+wire sck_neg=(!SPI_SCK && sck_val);
+
+//select value
+always @ (posedge clk)
+	begin
+	if(rst_flag)
+	begin
+		s_flag<=1'b0;
+	end
+	else
+	begin
+		s_flag<=SPI_S;
+	end
+	S<=SPI_S;
+end
+
+wire s_rise=(SPI_S && !s_flag);
+wire s_neg=(!SPI_S && s_flag);
+
+//reset value
+always @ (SPI_RESET)
+begin
+	if(SPI_RESET)
+	begin
+		rst_flag<=1'b0;
+	end
+	else
+	begin
+		rst_flag<=1'b1;
+	end
+	RESET<=SPI_RESET;
+end
+
+//read input
+always @ (posedge clk)
+begin	
+	if(sck_neg && !s_flag)
+	begin
+		cnt_bit<=cnt_bit+1;
+		data_to_read[7-cnt_bit]<=MOSI;
+	end
+	else if(cnt_bit==3'b111 && !s_flag && sck_pos)
+	begin
+		//data_to_read[7-cnt_bit]<=MOSI;
+		D<=data_to_read;
+		DATA_DONE<=1'b1;
+		data_to_send<=Q;
+	end
+	else if(s_flag)
+	begin
+		cnt_bit<=0;
+	end
+	else
+	begin
+		DATA_DONE<=1'b0;
+	end
+end
+
+always @ (posedge clk)
+begin
+	if(!s_flag && !rst_flag && sck_rise)
+	begin
+		miso_buff<=data_to_send[7-cnt_bit];
+	end
+end
+
+always @ (miso_buff)
+begin
+	if(rst_flag)
+	begin
+		MISO<=#`t_clqv 1'bZ;
+	end
+	else
+	begin
+		MISO<= #`t_clqv miso_buff;
+	end
+end
+
+endmodule 

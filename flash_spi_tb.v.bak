@@ -1,0 +1,35 @@
+module flash_spi_tb();
+reg SCK,S,RESET,W_ENABLE,D;
+wire Q;
+
+memory uut(
+.SCK(SCK),
+.S(S),
+.RESET(RESET),
+.W_ENABLE(W_ENABLE),
+.D(D),
+.Q(Q),
+);
+
+initial
+begin
+	S=1'b0;
+	RESET=1'b0;
+	W_ENABLE=1'b0;
+	SCK=1'b0;
+/*	D=1'b0;
+	#2 D=1'b1;
+	#2 D=1'b0;
+	#2 D=1'b1;
+	#2 D=1'b0;
+	#2 D=1'b1;
+	#2 D=1'b0;
+	#2 D=1'b1;
+	#2 D=1'b0;*/
+end
+
+always
+	#1 SCK=!SCK;
+
+endmodule
+	
